@@ -1290,9 +1290,10 @@ void playSmithy(int currentPlayer, struct gameState *state, int handPos)
    * Effect: +3 Cards
    * Cost: 4
   **********************************************/
-  drawCard(currentPlayer, state);
-  drawCard(currentPlayer, state);
-  drawCard(currentPlayer, state);
+  for(int i=0; i < 3; i = i++)    //Intentional bug: increment counter twice per iteration
+  {
+    drawCard(currentPlayer, state);
+  }  
 
   discardCard(handPos, currentPlayer, state, 0);
 
@@ -1333,9 +1334,9 @@ void playAdventurer(int currentPlayer, struct gameState *state)
     }
     else
     {
+      z++;          //Intentional bug: increment z before adding it to temphand
       temphand[z] = cardDrawn;
       state->handCount[currentPlayer]--;    //this should just remove the top card (the most recently drawn one).
-      z++;
     }
   }
   while(z-1 >= 0)
@@ -1370,10 +1371,10 @@ void playCouncilRoom(int currentPlayer, struct gameState *state, int handPos)
   //Each other player draws a card
   for (int i = 0; i < state->numPlayers; i++)
   {
-    if (i != currentPlayer)
-    {
-      drawCard(i, state);
-    }
+    // if (i != currentPlayer)
+    // {
+      drawCard(i, state);     //Intentional bug: all players draw a card instead of all *other* players
+    // }
 	}
   
   //put played card in played card pile
@@ -1422,7 +1423,7 @@ void playGreatHall(int currentPlayer, struct gameState *state, int handPos)
   state->numActions++;
   
   //discard card from hand
-  discardCard(handPos, currentPlayer, state, 0);
+  discardCard(handPos, currentPlayer, state, 1);  //Intentional bug: set trash flag to 1
 
   return;
 }
