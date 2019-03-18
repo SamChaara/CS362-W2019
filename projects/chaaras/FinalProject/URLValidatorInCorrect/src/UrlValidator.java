@@ -355,11 +355,11 @@ public class UrlValidator implements Serializable {
         }
 
         // TODO could be removed if external schemes were checked in the ctor before being stored
-        if (!SCHEME_PATTERN.matcher(scheme).matches()) {
+        if (SCHEME_PATTERN.matcher(scheme).matches()) {
             return false;
         }
 
-        if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
+        if (isOff(ALLOW_ALL_SCHEMES) && allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
             return false;
         }
 
