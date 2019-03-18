@@ -57,6 +57,27 @@ public class UrlValidatorTest extends TestCase {
       
    }
    
+   public void combineAndValidate(UrlValidator validator, String[] scheme, String[] host, String[] port, String[] path, boolean expected)
+   {
+	   boolean result;
+	   
+	   for(int i = 0; i < scheme.length; i++)
+	   {
+		   for(int k = 0; k < host.length; k++)
+		   {
+			   for(int l = 0; l < port.length; l++)
+			   {
+				   for(int m = 0; m < path.length; m++)
+				   {
+						   String URL = scheme[i] + host[k] + port[l] + path[m];
+						   result = validator.isValid(URL);
+						   assertEquals(URL, expected, result);
+				   }
+			   }
+		   }
+	   }
+   }
+   
    public void testIsValid()
    {
 	   boolean result;
@@ -64,8 +85,8 @@ public class UrlValidatorTest extends TestCase {
 	   //Start testing using the default options of the URL Validator
 	   UrlValidator urlValDefault = new UrlValidator();
 
-	   String[] validSchemes = {"http://", "https://", "ftp://"};
-	   String[] invalidSchemes = {"", "file://", "mailto://", "irc://", "http://", "http:/", "http//", "http:", "http/"};
+	   String[] validScheme = {"http://", "https://", "ftp://"};
+	   String[] invalidScheme = {"", "file://", "mailto://", "irc://", "http://", "http:/", "http//", "http:", "http/"};
  
 	   String[] validHost = {"www.google.com", "google.com", "WWW.GOOGLE.COM","test.google.com", "0.0.0.0", "255.255.255.255", "[0:0:0:0:0:0:0:1]", "[0:0:0:0:0:0:0:0]", "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]", "[2001:db8:85a3:0:0:8a2e:370:7334]", "[2001:DB8:85A3:0:0:8A2E:370:7334]", "[2001:db8:85a3::8a2e:370:7334]", "[::1]", "[::]"};
 	   String[] invalidHost = {".www.google.com", ".com.", "0.0.0", "256.255.255.255", "[0:0:0:0:0:0:0:Z]", "[0:0:0:0:0:0:0:z]", "[K001:0db8:85a3:0000:0000:8a2e:0370:7334]"};
@@ -104,100 +125,24 @@ public class UrlValidatorTest extends TestCase {
 	   assertTrue("URLs are not case sensitive", result);
 	   
 	   
-	   for(int i = 0; i < validSchemes.length; i++)
-	   {
-		   for(int k = 0; k < validHost.length; k++)
-		   {
-			   for(int l = 0; l < validPort.length; l++)
-			   {
-				   for(int m = 0; m < validPath.length; m++)
-				   {
-						   String URL = validSchemes[i] + validHost[k] + validPort[l] + validPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertTrue(URL, result);
-				   }
-			   }
-		   }
-	   }
+	   combineAndValidate(urlValDefault, validScheme, validHost, validPort, validPath, true);
+	   combineAndValidate(urlValDefault, validScheme, validHost, validPort, invalidPath, false);
+	   combineAndValidate(urlValDefault, validScheme, validHost, invalidPort, validPath, false);
+	   combineAndValidate(urlValDefault, validScheme, validHost, invalidPort, invalidPath, false);
 	   
-	   for(int i = 0; i < validSchemes.length; i++)
-	   {
-		   for(int k = 0; k < validHost.length; k++)
-		   {
-			   for(int l = 0; l < validPort.length; l++)
-			   {
-				   for(int m = 0; m < invalidPath.length; m++)
-				   {
-						   String URL = validSchemes[i] + validHost[k] + validPort[l] + invalidPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertFalse(URL, result);
-				   }
-			   }
-		   }
-	   }
-   
-	   for(int i = 0; i < validSchemes.length; i++)
-	   {
-		   for(int k = 0; k < validHost.length; k++)
-		   {
-			   for(int l = 0; l < invalidPort.length; l++)
-			   {
-				   for(int m = 0; m < invalidPath.length; m++)
-				   {
-						   String URL = validSchemes[i] + validHost[k] + invalidPort[l] + invalidPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertFalse(URL, result);
-				   }
-			   }
-		   }
-	   }
+	   combineAndValidate(urlValDefault, validScheme, invalidHost, validPort, validPath, false);
+	   combineAndValidate(urlValDefault, validScheme, invalidHost, validPort, invalidPath, false);
+	   combineAndValidate(urlValDefault, validScheme, invalidHost, invalidPort, validPath, false);
+	   combineAndValidate(urlValDefault, validScheme, invalidHost, invalidPort, invalidPath, false);
 	   
-	   for(int i = 0; i < validSchemes.length; i++)
-	   {
-		   for(int k = 0; k < invalidHost.length; k++)
-		   {
-			   for(int l = 0; l < invalidPort.length; l++)
-			   {
-				   for(int m = 0; m < invalidPath.length; m++)
-				   {
-						   String URL = validSchemes[i] + invalidHost[k] + invalidPort[l] + invalidPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertFalse(URL, result);
-				   }
-			   }
-		   }
-	   }
+	   combineAndValidate(urlValDefault, invalidScheme, validHost, validPort, validPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, validHost, validPort, invalidPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, validHost, invalidPort, validPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, validHost, invalidPort, invalidPath, false);
 	   
-	   for(int i = 0; i < validSchemes.length; i++)
-	   {
-		   for(int k = 0; k < invalidHost.length; k++)
-		   {
-			   for(int l = 0; l < invalidPort.length; l++)
-			   {
-				   for(int m = 0; m < invalidPath.length; m++)
-				   {
-						   String URL = validSchemes[i] + validHost[k] + invalidPort[l] + invalidPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertFalse(URL, result);
-				   }
-			   }
-		   }
-	   }
-	   
-	   for(int i = 0; i < invalidSchemes.length; i++)
-	   {
-		   for(int k = 0; k < invalidHost.length; k++)
-		   {
-			   for(int l = 0; l < invalidPort.length; l++)
-			   {
-				   for(int m = 0; m < invalidPath.length; m++)
-				   {
-						   String URL = invalidSchemes[i] + invalidHost[k] + invalidPort[l] + invalidPath[m];
-						   result = urlValDefault.isValid(URL);
-						   assertFalse(URL, result);
-				   }
-			   }
-		   }
-	   }
+	   combineAndValidate(urlValDefault, invalidScheme, invalidHost, validPort, validPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, invalidHost, validPort, invalidPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, invalidHost, invalidPort, validPath, false);
+	   combineAndValidate(urlValDefault, invalidScheme, invalidHost, invalidPort, invalidPath, false);
    }
 }
