@@ -3,13 +3,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 //had to make a class because you cant pass by reference in Java
-class iHateJava {
+class reference {
 	public int badUrl = 0;
-	public String scheme = "scheme fine";
-	public String author = "author fine";
-	public int port = 55555555;
-	public String query = "query fine";
-	public String path = "path fine";
 }
 public class randomUrlTest {
 	/* This will randomly generate a url by generating several parts of a url. Each part
@@ -34,7 +29,7 @@ public class randomUrlTest {
     private static final int PARSE_AUTHORITY_EXTRA = 4;
     private static final int PARSE_AUTHORITY_HOST_IP = 2;
     
-	static String generateUrl(iHateJava test) {
+	static String generateUrl(reference test) {
 	    String ipv6Let = "0123456789ABCDEFabcdef::::"; //maybe higher chance of : make it correct every so often
 	    String ipv6Control = "0123456789ABCDEFabcdef";
 		String pathLet = "abcdefghijklmonpqrstuvwxyz/.";
@@ -128,7 +123,6 @@ public class randomUrlTest {
 		
 		if (!scheme.equals("http") && !scheme.equals("ftp") && !scheme.equals("https")) {
 			test.badUrl += 1;
-			test.scheme = scheme;
 		}
 
 
@@ -166,14 +160,11 @@ public class randomUrlTest {
 		authority = authority + "." + domain;
 		if (!isValidAuthority(authority)) {
 			test.badUrl += 1;
-			test.author = authority;
 		}
 		//do random port, most of time will be a good port
 		int randoPort = (int)(Math.random() * 90000 - 15000); //also checks negative ports
 		if (randoPort > 65535 || randoPort < 0) {
 			test.badUrl += 1;
-			test.port = randoPort;
-			
 		}
 		String port = ":" + Integer.toString(randoPort);
 		
@@ -187,7 +178,6 @@ public class randomUrlTest {
 		String path = "/" + pathBuild;
 		if (!PATH_PATTERN.matcher(path).matches()) {
 			test.badUrl += 1;
-			test.path = path;
 		}
 		//make a random query
 		len = (int)(Math.random() * 10);
@@ -199,7 +189,6 @@ public class randomUrlTest {
 		query = "?" + query;
 		if (!QUERY_PATTERN.matcher(query).matches()) {
 			test.badUrl += 1;
-			test.query = query;
 		}
 		String url = "";
 			url = scheme + authority+ port + path + query;
@@ -256,7 +245,7 @@ public class randomUrlTest {
 		int badCount = 0;
 		int count = 1000000;
 		while (i < count) {
-			iHateJava test = new iHateJava();
+			reference test = new reference();
 			test.badUrl = 0;
 			String url = randomUrlTest.generateUrl(test);
 			UrlValidator urlVal = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
