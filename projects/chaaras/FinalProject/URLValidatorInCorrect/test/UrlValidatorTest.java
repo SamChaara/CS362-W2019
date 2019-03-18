@@ -21,8 +21,40 @@ public class UrlValidatorTest extends TestCase {
    
    public void testManualTest()
    {
-//You can use this function to implement your manual testing	   
+//You can use this function to implement your manual testing
+	  boolean expected;
+      boolean result;
 	   
+	  // Upper case IPV6
+      UrlValidator urlVal = new UrlValidator();
+       
+      String ipv6_url_upper ="http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]";
+      expected = true;
+      result = urlVal.isValid(ipv6_url_upper);
+      assertEquals(ipv6_url_upper, expected, result);
+      
+      // Lower case IPV6
+      String ipv6_url_lower ="http://[fedc:ba98:7654:3210:fedc:ba98:7654:3210]";
+      expected = true;
+      result = urlVal.isValid(ipv6_url_lower);
+      assertEquals(ipv6_url_lower, expected, result);
+   
+      // Schemes
+      String[] schemes = {"ftp", "https", "http"};
+      UrlValidator urlVal2 = new UrlValidator(schemes);
+      
+      // Valid scheme
+      String goodScheme = "https://www.google.com:80/test1?action=view";
+      expected = true;
+      result = urlVal2.isValid(goodScheme);
+      assertEquals(goodScheme, expected, result);
+
+      // Invalid scheme
+      String badScheme = "h3t://www.google.com:80/test1?action=view";
+      expected = false;
+      result = urlVal2.isValid(badScheme);
+      assertEquals(badScheme, expected, result);
+      
    }
    
    
