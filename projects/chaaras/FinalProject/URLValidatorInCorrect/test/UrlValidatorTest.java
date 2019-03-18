@@ -57,25 +57,147 @@ public class UrlValidatorTest extends TestCase {
       
    }
    
-   
-   public void testYourFirstPartition()
-   {
-	 //You can use this function to implement your First Partition testing	   
-
-   }
-   
-   public void testYourSecondPartition(){
-		 //You can use this function to implement your Second Partition testing	   
-
-   }
-   //You need to create more test cases for your Partitions if you need to 
-   
    public void testIsValid()
    {
-	   //You can use this function for programming based testing
+	   boolean result;
 
-   }
+	   //Start testing using the default options of the URL Validator
+	   UrlValidator urlValDefault = new UrlValidator();
+
+	   String[] validSchemes = {"http://", "https://", "ftp://"};
+	   String[] invalidSchemes = {"", "file://", "mailto://", "irc://", "http://", "http:/", "http//", "http:", "http/"};
+ 
+	   String[] validHost = {"www.google.com", "google.com", "WWW.GOOGLE.COM","test.google.com", "0.0.0.0", "255.255.255.255", "[0:0:0:0:0:0:0:1]", "[0:0:0:0:0:0:0:0]", "[2001:0db8:85a3:0000:0000:8a2e:0370:7334]", "[2001:db8:85a3:0:0:8a2e:370:7334]", "[2001:DB8:85A3:0:0:8A2E:370:7334]", "[2001:db8:85a3::8a2e:370:7334]", "[::1]", "[::]"};
+	   String[] invalidHost = {".www.google.com", ".com.", "0.0.0", "256.255.255.255", "[0:0:0:0:0:0:0:Z]", "[0:0:0:0:0:0:0:z]", "[K001:0db8:85a3:0000:0000:8a2e:0370:7334]"};
+	   
+	   String[] validPort = {"", ":80", ":8080", ":1", ":65535"};
+	   String[] invalidPort = {":99999999999", ":abc", ":-1", ":65536"};
+	   
+	   String[] validPath = {"/test/", "/test", "/1test/", "/test1/", "/hello/world/", "/hello/world", "/hello/world.html"};
+	   String[] invalidPath = {"/../", "/../hello/world/", "/hello/..//world/", "/hello//world"};
+	   
+	   result = urlValDefault.isValid(null);
+	   assertFalse("null shouldn't be a valid url", result);
+	   
+	   result = urlValDefault.isValid("http://www.google.com/");
+	   assertTrue("http://www.google.com/ is a known good url", result);
+	   
+	   result = urlValDefault.isValid("http://www.google.com");
+	   assertTrue("http://www.google.com is a known good url", result);
+	   
+	   result = urlValDefault.isValid("http://www.google.com/?task=view");
+	   assertTrue("http://www.google.com/?task=view is a known good url", result);
+	   
+	   result = urlValDefault.isValid("http://username:password@www.google.com/");
+	   assertTrue("http://username:password@www.google.com/ is a known good url", result);
+	   
+	   result = urlValDefault.isValid("http://username:@www.google.com/");
+	   assertTrue("http://username:@www.google.com/ is a known good url", result);
+	   
+	   result = urlValDefault.isValid("http://:password@www.google.com/");
+	   assertFalse("http://:password@www.google.com/ is a known bad url", result);
+	   
+	   result = urlValDefault.isValid("http://:@www.google.com/");
+	   assertFalse("http://:@www.google.com/ is a known bad url", result);
+	   
+	   result = urlValDefault.isValid("HTTP://WWW.GOOGLE.COM");
+	   assertTrue("URLs are not case sensitive", result);
+	   
+	   
+	   for(int i = 0; i < validSchemes.length; i++)
+	   {
+		   for(int k = 0; k < validHost.length; k++)
+		   {
+			   for(int l = 0; l < validPort.length; l++)
+			   {
+				   for(int m = 0; m < validPath.length; m++)
+				   {
+						   String URL = validSchemes[i] + validHost[k] + validPort[l] + validPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertTrue(URL, result);
+				   }
+			   }
+		   }
+	   }
+	   
+	   for(int i = 0; i < validSchemes.length; i++)
+	   {
+		   for(int k = 0; k < validHost.length; k++)
+		   {
+			   for(int l = 0; l < validPort.length; l++)
+			   {
+				   for(int m = 0; m < invalidPath.length; m++)
+				   {
+						   String URL = validSchemes[i] + validHost[k] + validPort[l] + invalidPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertFalse(URL, result);
+				   }
+			   }
+		   }
+	   }
    
-
-
+	   for(int i = 0; i < validSchemes.length; i++)
+	   {
+		   for(int k = 0; k < validHost.length; k++)
+		   {
+			   for(int l = 0; l < invalidPort.length; l++)
+			   {
+				   for(int m = 0; m < invalidPath.length; m++)
+				   {
+						   String URL = validSchemes[i] + validHost[k] + invalidPort[l] + invalidPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertFalse(URL, result);
+				   }
+			   }
+		   }
+	   }
+	   
+	   for(int i = 0; i < validSchemes.length; i++)
+	   {
+		   for(int k = 0; k < invalidHost.length; k++)
+		   {
+			   for(int l = 0; l < invalidPort.length; l++)
+			   {
+				   for(int m = 0; m < invalidPath.length; m++)
+				   {
+						   String URL = validSchemes[i] + invalidHost[k] + invalidPort[l] + invalidPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertFalse(URL, result);
+				   }
+			   }
+		   }
+	   }
+	   
+	   for(int i = 0; i < validSchemes.length; i++)
+	   {
+		   for(int k = 0; k < invalidHost.length; k++)
+		   {
+			   for(int l = 0; l < invalidPort.length; l++)
+			   {
+				   for(int m = 0; m < invalidPath.length; m++)
+				   {
+						   String URL = validSchemes[i] + validHost[k] + invalidPort[l] + invalidPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertFalse(URL, result);
+				   }
+			   }
+		   }
+	   }
+	   
+	   for(int i = 0; i < invalidSchemes.length; i++)
+	   {
+		   for(int k = 0; k < invalidHost.length; k++)
+		   {
+			   for(int l = 0; l < invalidPort.length; l++)
+			   {
+				   for(int m = 0; m < invalidPath.length; m++)
+				   {
+						   String URL = invalidSchemes[i] + invalidHost[k] + invalidPort[l] + invalidPath[m];
+						   result = urlValDefault.isValid(URL);
+						   assertFalse(URL, result);
+				   }
+			   }
+		   }
+	   }
+   }
 }
